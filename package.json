@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "start": "nodemon index.js",
-    "build:css": "npx tailwindcss -i ./server/view/css/style.template.css -o ./server/view/public/style.css --watch"
+    "build:css": "npx tailwindcss -i ./server/view/css/style.template.css -o ./server/view/public/style/style.css --watch"
   },
   "author": "Earl Cameron",
   "license": "ISC",

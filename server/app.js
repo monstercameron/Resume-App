@@ -10,7 +10,12 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(logger);
 app.set("view engine", "ejs");
+
+// Assuming your views are in a folder named 'view' located at the same level as your entry script
 app.set('views', path.join(__dirname, 'view'));
+
+// Assuming your static files are in a folder named 'public' inside the 'view' folder
+app.use(express.static(path.join(__dirname, 'view', 'public')));
 
 // Routes
 app.get("/", router);
