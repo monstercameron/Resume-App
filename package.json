@@ -4,7 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "nodemon index.js"
+    "start": "nodemon index.js",
+    "build:css": "npx tailwindcss -i ./server/view/css/style.template.css -o ./server/view/public/style.css --watch"
   },
   "author": "Earl Cameron",
   "license": "ISC",
@@ -16,7 +17,11 @@
     "mysql": "^2.18.1",
     "mysql2": "^3.6.0",
     "nodemon": "^3.0.1",
+    "openai": "^4.3.1",
     "winston": "^3.10.0",
     "winston-daily-rotate-file": "^4.7.1"
+  },
+  "devDependencies": {
+    "tailwindcss": "^3.3.3"
   }
 }
