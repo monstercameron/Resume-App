@@ -1,0 +1,6 @@
+2023-08-30T04:35:36.597Z Failed to connect to database
+2023-08-30T04:36:06.570Z Failed to connect to database
+2023-08-30T04:36:13.670Z Failed to connect to database
+2023-08-30T04:36:14.860Z Failed to connect to database
+2023-08-30T04:36:52.763Z Failed to connect to database
+2023-08-30T04:46:00.842Z TypeError: db.query is not a function
