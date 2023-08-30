@@ -1,9 +1,8 @@
 const express = require('express')
 const router = express.Router()
+const { home } = require("./home")
 
-router.get("/", async (req, res) => {
-    res.send("home")
-})
+router.get("/", home)
 
 // app.get("/test", async (req, res) => {
 //   try {

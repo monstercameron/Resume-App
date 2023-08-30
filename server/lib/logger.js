@@ -31,10 +31,10 @@ const errorStream = fs.createWriteStream(path.join(logsDir, "error.log"), {
 
 // Override the default console.error function
 // This will write to error.log and also to the standard error output
-// console.error = function (message) {
-//   errorStream.write(new Date().toISOString() + " " + message + "\n");
-//   process.stderr.write(message + "\n");
-// };
+console.error = function (message) {
+  errorStream.write(new Date().toISOString() + " " + message + "\n");
+  process.stderr.write(message + "\n");
+};
 
 // Middleware to log HTTP request and response details
 const logger = (req, res, next) => {
