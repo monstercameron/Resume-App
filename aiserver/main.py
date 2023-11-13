@@ -6,12 +6,22 @@ from mysql.connector import Error
 from typing import Dict, Any
 import signal
 from dotenv import load_dotenv
+from openai import OpenAI
 
 load_dotenv()
 
 
 class Assistant:
     def __init__(self, key: str = os.getenv("OPENAI_API_KEY")):
+        """
+        Initializes the Assistant object.
+
+        Args:
+            key (str): The OpenAI API key. Defaults to the value of the OPENAI_API_KEY environment variable.
+
+        Raises:
+            ValueError: If no API key is provided.
+        """
         if not key:
             raise ValueError(
                 "No API key provided. Set OPENAI_API_KEY environment variable."
@@ -36,6 +46,16 @@ class Assistant:
                 "tools": [{"type": "code_interpreter"}],
                 "model": "gpt-4-1106-preview",
             },
+        }
+
+        self.functions = {
+            "education_history": {
+                "name": "education_history",
+                "description": "Extract all education history.",
+                "instructions": "You are a helpful assistant designed to output JSON. Extract all education history.",
+                "model": "gpt-4-1106-preview",
+                "response_format": {"type": "json_object"},
+            }
         }
         # RabbitMQ Connection
         self.rabbitmq_connection = pika.BlockingConnection(
@@ -67,11 +87,15 @@ class Assistant:
             "password": "your_password",
         }
 
+        self.create(self.assistants["applicant"])
+
     def run(self):
         def generate_callback(queue_name):
             def callback(ch, method, properties, body):
-                print(f"Received from {queue_name}: {body}")
-                # response = self.process_message(queue_name, body)
+                message_str = body.decode('utf-8')
+                print(f"Received from {queue_name}: {body[:50]}...")
+                response = self.process_message(queue_name, message_str)
+                print(f"Sending to {queue_name}: {response}")
                 # self.store_in_database(response)
                 ch.basic_ack(delivery_tag=method.delivery_tag)
 
@@ -94,10 +118,26 @@ class Assistant:
         finally:
             self.rabbitmq_connection.close()
 
-    def process_message(self, message):
-        # Implement message processing logic here
-        # This should call the appropriate assistant and return its response
-        pass
+    def process_message(self, queue_name, message):
+        
+        # Logic to handle messages based on the queue they came from
+        if queue_name == "education_history":
+            response = self.virtual_function(
+                self.functions["education_history"], message
+            )
+
+        return response
+
+    def virtual_function(self, function, payload):
+        response = self.client.chat.completions.create(
+            model=function["model"],
+            response_format=function["response_format"],
+            messages=[
+                {"role": "system", "content": function["instructions"]},
+                {"role": "user", "content": payload},
+            ],
+        )
+        return response.choices[0].message.content
 
     def store_in_database(self, response):
         try:
@@ -114,7 +154,7 @@ class Assistant:
             if connection.is_connected():
                 connection.close()
 
-    def create(self, assistant: Dict[str, Any]) -> Any:
+    def create(self, assistant) -> Any:
         """
         Creates a new OpenAI assistant using the provided configuration.
 
