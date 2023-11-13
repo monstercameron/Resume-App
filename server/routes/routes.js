@@ -1,18 +1,11 @@
-const express = require('express')
-const router = express.Router()
-const { home } = require("./home")
+const express = require("express");
+const router = express.Router();
+const { home } = require("./home");
+const { login } = require("./login");
+const { app } = require("./app");
 
-router.get("/", home)
+router.get("/", home);
+router.get("/login", login);
+router.get("/app", app);
 
-// app.get("/test", async (req, res) => {
-//   try {
-//     const results = await queryDatabase("SELECT * FROM test where idtest = ?", [1]);
-//     console.info("Query successful", results);
-//     res.send(results);
-//   } catch (error) {
-//     console.error("Database query failed", error);
-//     res.status(500).send("Internal Server Error");
-//   }
-// });
-
-module.exports = router
+module.exports = router;
