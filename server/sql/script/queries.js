@@ -1,39 +1,39 @@
-const mysql = require("mysql");
-const fs = require("fs");
-const path = require("path");
-require("dotenv").config({ path: path.resolve(__dirname, "../../../.env") });
-const { marshalUser } = require("../../models/Users");
+const DatabaseManager = require("../../lib/database"); // Adjust the path as necessary
+const { marshalUsers } = require("../../models/Users");
 const { marshalProjects } = require("../../models/Projects");
 const { marshalEducations } = require("../../models/Education");
 const { marshalJobs } = require("../../models/Jobs");
+const fs = require("fs");
+const path = require("path");
+require("dotenv").config({ path: path.resolve(__dirname, "../../../.env") });
 
-// MySQL connection configuration using environment variables
-const connection = mysql.createConnection({
-  host: process.env.DB_HOST,
-  user: process.env.DB_USER,
-  password: process.env.DB_PASS,
-  database: process.env.DB_NAME,
-  charset: "utf8",
-});
+// Query testing palyground
 
-connection.connect((err) => {
-  if (err) throw err;
-  console.log("Connected to MySQL server.");
 
-  callSP(1); // Replace 1 with the user ID you want to test
-});
-
-function callSP(userId) {
-  connection.query(
-    "CALL sp_get_all_jobs_for_user(?)",
-    [userId],
-    (err, results) => {
-      if (err) {
-        console.log("Error calling stored procedure: ", err);
-        return;
-      }
-
-      console.log("Stored Procedure Result: ", marshalJobs(results[0]));
-    }
-  );
+// Function to call a stored procedure and process the results
+async function callSP(userId) {
+  try {
+    const spResults = await DatabaseManager.executeProcedure(
+      "sp_get_user_record",
+      [userId]
+    );
+    const marshaledResults = DatabaseManager.marshalData(
+      spResults,
+      marshalUsers
+    );
+    // console.log("Marshaled Stored Procedure Result Raw: ");
+    // console.log( spResults);
+    console.log("Marshaled Stored Procedure Result: ", marshaledResults);
+  } catch (err) {
+    console.error("Error calling stored procedure: ", err);
+  }
 }
+
+// Initialize the database and call the stored procedure
+DatabaseManager.initializePool()
+  .then(() => {
+    callSP(1); // Replace 1 with the user ID you want to test
+  })
+  .catch((err) => {
+    console.error("Error initializing database pool: ", err);
+  });
