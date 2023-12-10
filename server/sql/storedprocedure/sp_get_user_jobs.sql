@@ -1,4 +1,4 @@
-CREATE PROCEDURE sp_get_all_jobs_for_user(IN user_id_param INT)
+CREATE PROCEDURE sp_get_user_record(IN email_param VARCHAR(255))
 BEGIN
-    SELECT * FROM jobs WHERE user_id = user_id_param;
+    SELECT * FROM users WHERE email = email_param;
 END;

@@ -1,0 +1,31 @@
+<div class="mx-auto p-5 m-5 border shadow">
+  <form hx-post="/register" hx-target="body" hx-swap="outerHTML">
+    <div>
+      <label>User Name</label>
+      <input type="text" name="userName" value="Joe" />
+    </div>
+    <div class="form-group">
+      <label>Email Address</label>
+      <input type="email" name="email" value="joe@blow.com" />
+    </div>
+    <div class="form-group">
+      <label>Password</label>
+      <input
+        type="password"
+        name="password"
+        value="password"
+        placeholder="Password"
+      />
+    </div>
+    <div class="form-group">
+      <label>Password</label>
+      <input
+        type="Password"
+        name="confirmPassword"
+        value="password"
+        placeholder="Confirm Password"
+      />
+    </div>
+    <button class="btn">Submit</button>
+  </form>
+</div>
