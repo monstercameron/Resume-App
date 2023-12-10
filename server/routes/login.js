@@ -10,10 +10,11 @@ const loginPage = async (req, res) => {
 const login = async (req, res) => {
   const { email, password } = req.body;
 
-  if (!email || !password) {
+  // Enhanced input validation
+  if (!email || !validator.isEmail(email) || !password) {
     return res.render("pages/base", {
       page: "./didNotLogin",
-      message: "Email and password are required",
+      message: "Valid email and password are required",
     });
   }
 
@@ -30,23 +31,29 @@ const login = async (req, res) => {
     const [user] = users;
 
     if (await auth.comparePassword(email + password, user.hash)) {
-      const token = auth.generateJWT({ email, isAdmin: false });
+      const [admin] = await db.executeProcedure("sp_get_isadmin", [
+        user.user_id,
+      ]);
+      const [{ is_admin }] = admin;
+
+      const token = auth.generateJWT({ email, isAdmin: Boolean(is_admin) });
       res.cookie("token", token, { httpOnly: true });
-      res.render("pages/base", {
+
+      return res.render("pages/base", {
         page: "./didLogin",
         message: "Login successful",
       });
     } else {
-      res.render("pages/base", {
+      return res.render("pages/base", {
         page: "./didNotLogin",
         message: "Incorrect password",
       });
     }
   } catch (error) {
     console.error("Login error:", error.message);
-    res.render("pages/base", {
+    return res.render("pages/base", {
       page: "./didNotLogin",
-      message: "An error occurred during login",
+      message: "An error occurred during login. Please try again later.",
     });
   }
 };
