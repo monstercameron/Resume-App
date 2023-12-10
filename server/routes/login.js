@@ -10,7 +10,6 @@ const loginPage = async (req, res) => {
 const login = async (req, res) => {
   const { email, password } = req.body;
 
-  // Input validation (basic example)
   if (!email || !password) {
     return res.render("pages/base", {
       page: "./didNotLogin",
@@ -31,6 +30,8 @@ const login = async (req, res) => {
     const [user] = users;
 
     if (await auth.comparePassword(email + password, user.hash)) {
+      const token = auth.generateJWT({ email, isAdmin: false });
+      res.cookie("token", token, { httpOnly: true });
       res.render("pages/base", {
         page: "./didLogin",
         message: "Login successful",

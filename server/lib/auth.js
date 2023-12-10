@@ -5,13 +5,13 @@ const SECRET_KEY = "your_secret_key"; // Replace with your secret key
 const REFRESH_SECRET_KEY = "your_refresh_secret_key"; // Replace with your refresh token secret key
 
 /**
- * Generate a JWT for a given user.
+ * Generate a JWT for a given payload.
  *
- * @param {Object} user - The user object to encode in the JWT.
+ * @param {Object} payload - The payload object to encode in the JWT.
  * @returns {string} The generated JWT.
  */
-const generateJWT = (user) => {
-  return jwt.sign({ user }, SECRET_KEY, { expiresIn: "1h" });
+const generateJWT = (payload) => {
+  return jwt.sign({ ...payload }, SECRET_KEY, { expiresIn: "1h" });
 };
 
 /**

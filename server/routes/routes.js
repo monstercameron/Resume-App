@@ -1,4 +1,6 @@
 const express = require("express");
+const { protected } = require("../middleware/protected");
+
 const router = express.Router();
 
 const { home } = require("./home");
@@ -11,6 +13,6 @@ router.get("/register", registerPage);
 router.post("/register", register);
 
 const { app } = require("./app");
-router.get("/app", app);
+router.get("/app", protected, app);
 
 module.exports = router;
